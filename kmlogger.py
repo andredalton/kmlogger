@@ -65,9 +65,6 @@ while True:
 	r,w,x = select(devices, [], [])
 	for fd in r:
 		for event in devices[fd].read():
-#			print(event)
-#			print(categorize(event))
-			
 			# F5 - salva os eventos
 			if not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F5:
 				print "\rSalvando               "
@@ -80,6 +77,7 @@ while True:
 			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F7:
 				print "\rPlay               "
 				playHistory(history)
+				print "\rEnd"
 				
 			# F12 - Inicia e finaliza gravacao
 			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F12 and event.value == 00:
@@ -99,13 +97,13 @@ while True:
 			elif event.type == ecodes.EV_SYN and event.code == 00 and event.value == 00 and copy:
 				history.append( {"mouse": m.position(), "event": event} )
 				
-			# PlayStop - Play caso nao esteja gravando
-			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_PLAYPAUSE and event.value == 00 and not copy and not play:
+			# F8 - Play caso nao esteja gravando
+			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F8 and event.value == 00 and not copy and not play:
 				print "\nplay forever"
 				while True:
 					playHistory(history)
-			# PlayStop - Para caso esteja tocando
-			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_PLAYPAUSE and event.value == 00 and not copy and play:
+			# F8 - Para caso esteja tocando
+			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F8 and event.value == 00 and not copy and play:
 				print "stop"
 				play = False
 				
