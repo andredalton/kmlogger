@@ -12,9 +12,6 @@ import time
 import contextlib
 import sys
 
-print sys.argv
-sys.exit()
-
 # Funcao que roda o historico carregado no parametro de entrada h
 def playHistory(h):
 	i = 1
