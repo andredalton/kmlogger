@@ -12,6 +12,9 @@ import time
 import contextlib
 import sys
 
+print sys.argv
+sys.exit()
+
 # Funcao que roda o historico carregado no parametro de entrada h
 def playHistory(h):
 	i = 1
@@ -155,7 +158,7 @@ while True:
 			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F12 and event.value == 00:
 				if copy:
 					print "\rFinalizado                "
-					saveLog('event.pkl')
+					saveLog('event.pkl', history)
 					copy = False
 				else:
 					if thr.__class__.__name__ == "playHistoryThread":
