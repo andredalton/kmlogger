@@ -75,11 +75,11 @@ def handler():
 
 
 # Funcao para salvar e carregar os eventos no arquivo default 'event.pkl'
-def saveLog(data):
-	pickle.dump( data, open('event.pkl', 'wb'), -1)
+def saveLog(filename, data):
+	pickle.dump( data, open(filename, 'wb'), -1)
 	
-def getLog():
-	return pickle.load(open('event.pkl', 'rb'))
+def getLog(filename):
+	return pickle.load(open(filename, 'rb'))
 
 # Inicia a busca por dispositivos de mouse e teclado
 devicesList = []
@@ -109,7 +109,7 @@ history = []		# Historico dos eventos
 thr 	= False		# Thread de controle do player
 
 # Auto load (ultima execucao)
-history = getLog()
+history = getLog('event.pkl')
 
 # Ciclo principal do programa.
 while True:
@@ -118,12 +118,14 @@ while True:
 		for event in devices[fd].read():
 			# F5 - salva os eventos
 			if not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F5:
-				print "\rSalvando               "
-				saveLog(history)
+				filename =  raw_input("\rDigite o nome do arquivo: ")
+				saveLog(filename, history)
+				print "\rSalvo               "
 			# F6 - carrega os eventos.
 			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F6:
-				print "\rCarregando              "
-				history = getLog()
+				filename =  raw_input("\rDigite o nome do arquivo: ")
+				history = getLog(filename)
+				print "\rCarregado              "
 			# F7 - roda uma vez.
 			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F7:
 				print "\rPlay               "
@@ -153,7 +155,7 @@ while True:
 			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F12 and event.value == 00:
 				if copy:
 					print "\rFinalizado                "
-					saveLog(history)
+					saveLog('event.pkl')
 					copy = False
 				else:
 					if thr.__class__.__name__ == "playHistoryThread":
