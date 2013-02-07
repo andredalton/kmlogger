@@ -108,6 +108,9 @@ start	= False		# Posicao inicial do cursor do mouse
 history = []		# Historico dos eventos
 thr 	= False		# Thread de controle do player
 
+# Auto load (ultima execucao)
+history = getLog()
+
 # Ciclo principal do programa.
 while True:
 	r,w,x = select(devices, [], [])
@@ -150,6 +153,7 @@ while True:
 			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F12 and event.value == 00:
 				if copy:
 					print "\rFinalizado                "
+					saveLog(history)
 					copy = False
 				else:
 					if thr.__class__.__name__ == "playHistoryThread":
