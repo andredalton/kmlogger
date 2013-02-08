@@ -119,7 +119,8 @@ history = []		# Historico dos eventos
 thr 	= False		# Thread de controle do player
 
 # Auto load (ultima execucao)
-history = getLog('event.pkl')
+with handler():
+	history = getLog('event.pkl')
 
 # Ciclo principal do programa.
 while True:
