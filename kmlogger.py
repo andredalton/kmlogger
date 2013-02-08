@@ -12,6 +12,16 @@ import time
 import contextlib
 import sys
 
+# Funcao para dar flush no buffer de entrada
+def flush_input():
+    try:
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    except ImportError:
+        import sys, termios
+        termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
 # Funcao que roda o historico carregado no parametro de entrada h
 def playHistory(h):
 	i = 1
@@ -118,11 +128,13 @@ while True:
 		for event in devices[fd].read():
 			# F5 - salva os eventos
 			if not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F5:
+				flush_input()
 				filename =  raw_input("\rDigite o nome do arquivo: ")
 				saveLog(filename, history)
 				print "\rSalvo               "
 			# F6 - carrega os eventos.
 			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F6:
+				flush_input()
 				filename =  raw_input("\rDigite o nome do arquivo: ")
 				history = getLog(filename)
 				print "\rCarregado              "
@@ -140,9 +152,10 @@ while True:
 					thr.Stop()
 			# Esc - quit.
 			elif event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_ESC:
-				print "\rBye, gatinho               "
+				print "\rBye!"
 				if thr.__class__.__name__ == "playHistoryThread":
 					thr.Stop()
+				flush_input()
 				sys.exit()
 			
 			# Pause - pause/play.
@@ -184,6 +197,6 @@ while True:
 			# Grava todas as teclas de mouse e teclado
 			elif copy and event.type == ecodes.EV_KEY and event.code != ecodes.KEY_F12:
 				history.append( {"mouse": m.position(), "event": event} )
-
+flush_input()
 ctrl.Kill()
 ui.close()
