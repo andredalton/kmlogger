@@ -1,5 +1,5 @@
 from __future__ import with_statement
-from evdev import InputDevice, categorize, ecodes, list_devices, UInput
+from evdev import InputDevice, ecodes, UInput
 from pymouse import PyMouse
 from select import select
 from threading import Thread
@@ -11,6 +11,22 @@ import cPickle as pickle
 import time
 import contextlib
 import sys
+
+'''
+from Xlib import X, display
+d = display.Display().screen().root.query_pointer()._data
+     
+print "x="
+print d["root_x"]
+print "y="
+print d["root_y"]
+
+
+display.Display().screen().root.query_pointer()._data["root_x"] = 800
+display.Display().screen().root.query_pointer()._data["root_y"] = 800
+
+sys.exit()
+'''
 
 # Funcao para dar flush no buffer de entrada
 def flush_input():
@@ -24,8 +40,8 @@ def flush_input():
 
 # Funcao que roda o historico carregado no parametro de entrada h
 def playHistory(h):
-	i = 1
-	for now in history:
+    i = 1
+    for now in history:
 		m.move( now.get("mouse")[0], now.get("mouse")[1])
 		if now.get("event").type == ecodes.EV_KEY:
 			ui.write(ecodes.EV_KEY, now.get("event").code, now.get("event").value)
@@ -127,27 +143,27 @@ while True:
 	r,w,x = select(devices, [], [])
 	for fd in r:
 		for event in devices[fd].read():
-			# F5 - salva os eventos
+            # F5 - salva os eventos
 			if not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F5:
 				flush_input()
-				filename =  raw_input("\rDigite o nome do arquivo: ")
+				filename =  raw_input("\rSalvar arquivo: ")
 				saveLog(filename, history)
 				print "\rSalvo               "
 			# F6 - carrega os eventos.
 			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F6:
 				flush_input()
-				filename =  raw_input("\rDigite o nome do arquivo: ")
+				filename =  raw_input("\rCarregar arquivo: ")
 				history = getLog(filename)
 				print "\rCarregado              "
-			# F7 - roda uma vez.
-			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F7:
+			# F3 - roda uma vez.
+			elif not copy and not play and event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F3:
 				print "\rPlay               "
 				if thr.__class__.__name__ == "playHistoryThread":
 					thr.Stop()
 				thr = playHistoryThread( 1 )
 				thr.start()
 			# Del - stop.
-			elif event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_F4:
+			elif event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_DELETE:
 				print "\rStop               "
 				if thr.__class__.__name__ == "playHistoryThread":
 					thr.Stop()
@@ -187,8 +203,8 @@ while True:
 			elif event.type == ecodes.EV_SYN and event.code == 00 and event.value == 00 and copy:
 				history.append( {"mouse": m.position(), "event": event} )
 				
-			# F8 - Play caso nao esteja gravando
-			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F8 and event.value == 00 and not copy and not play:
+			# F4 - Play caso nao esteja gravando
+			elif event.type == ecodes.EV_KEY and event.code == ecodes.KEY_F4 and event.value == 00 and not copy and not play:
 				print "\nPlay forever"
 				if thr.__class__.__name__ == "playHistoryThread":
 					thr.Stop()
@@ -199,5 +215,4 @@ while True:
 			elif copy and event.type == ecodes.EV_KEY and event.code != ecodes.KEY_F12:
 				history.append( {"mouse": m.position(), "event": event} )
 flush_input()
-ctrl.Kill()
 ui.close()
