@@ -2,8 +2,10 @@
 __author__ = 'avale'
 
 """
+
 Programa para fazer com que o controle/laser projetado para PowerPoint funcione com arquivos PDF.
 Device ID 1223:3f66 SKYCABLE ENTERPRISE. CO., LTD.
+
 """
 
 from os import walk, path
